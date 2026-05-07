@@ -10,11 +10,7 @@ class Permiso:
         self.descuento       = descuento  # monto calculado y persistido
 
     def calcular_descuento(self, valor_hora):
-        """Única fuente de verdad para el cálculo del descuento.
-        - tipo 'H' → tiempo * valor_hora
-        - tipo 'D' → tiempo * 8 horas * valor_hora
-        Actualiza self.descuento y lo retorna.
-        """
+        
         if self.tipo == "H":
             monto = self.tiempo * valor_hora
         else:
@@ -39,5 +35,5 @@ class Permiso:
         return cls(
             datos["id"], datos["id_empleado"], datos["id_tipo_permiso"],
             datos["fecha_desde"], datos["fecha_hasta"], datos["tipo"], datos["tiempo"],
-            datos.get("descuento", 0.0),  # compatibilidad con JSONs sin este campo
+            datos.get("descuento", 0.0),  
         )

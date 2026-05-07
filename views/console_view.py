@@ -1,7 +1,8 @@
 from core.decoradores import validar_nombre, validar_texto, validar_numero, validar_fecha, validar_d_h, validar_s_n, validar_cedula
+from models.permission import Permiso as _Permiso
 from datetime import datetime
 import os
-import sys
+
 
 
 
@@ -103,13 +104,14 @@ class ConsoleView:
 
     @validar_nombre
     def obtener_nombre(self):
-        while True:
-            Nombre_completo = input(color("  Nombre y Apellido: ", Color.CYAN)).strip()
-            partes = Nombre_completo.split()
-            if len(partes) >= 2 and all(p.isalpha() for p in partes):
-                return Nombre_completo.title()
-            else:
-                mensaje_error("Debe ingresar al menos un nombre y un apellido (solo letras).")
+       
+        Nombre_completo = input(color("  Nombre y Apellido: ", Color.CYAN)).strip()
+        partes = Nombre_completo.split()
+        if len(partes) >= 2 and all(p.isalpha() for p in partes):
+            return Nombre_completo.title()
+            
+        mensaje_error("Debe ingresar al menos un nombre y un apellido.")
+        return ""
 
     @validar_numero
     def obtener_sueldo(self):
@@ -240,7 +242,6 @@ class ConsoleView:
         emp_obj    = next((e for e in empleados if e.id == id_emp), None)
 
         
-        from models.permission import Permiso as _Permiso
         _permiso_tmp = _Permiso(0, id_emp, id_tipo, desde, hasta, tipo, tiempo)
 
         linea("─", 50, Color.AMARILLO)
@@ -343,7 +344,10 @@ class ConsoleView:
             tipo   = self.obtener_d_h()
             tiempo = int(self.obtener_cantidad_tiempo())
             return {"fecha_desde": desde, "fecha_hasta": hasta, "tipo": tipo, "tiempo": tiempo}
-
+        else:
+            mensaje_error(f"Categoría de actualización '{categoria}' no reconocida.")
+            return {}
+    
     def mostrar_mensaje(self, mensaje):
         print(color(f"\n  {mensaje}", Color.AMARILLO))
         pausa()

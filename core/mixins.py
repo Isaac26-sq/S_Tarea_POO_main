@@ -1,4 +1,4 @@
-# Mixin de validaciones reutilizables para modelos y controladores.
+
 class ValidationMixin:
 
     @staticmethod
