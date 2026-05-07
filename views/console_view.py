@@ -3,13 +3,6 @@ from models.permission import Permiso as _Permiso
 from datetime import datetime
 import os
 
-
-
-
-def gotoxy(x, y):
-    
-    print(f"\033[{y};{x}H", end="", flush=True)
-
 def limpiar_pantalla():
     
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -302,10 +295,17 @@ class ConsoleView:
             mensaje_info("Sin solicitudes registradas.")
         else:
             for p in datos["permisos"]:
+                emp_obj = next((e for e in datos["empleados"] if e.id == p.id_empleado), None)
+                nombre_emp = emp_obj.nombre if emp_obj else f"ID: {p.id_empleado}"
+
+                tipo_obj = next((t for t in datos["tipos"] if t.id == p.id_tipo_permiso), None)
+                desc_tipo = tipo_obj.descripcion if tipo_obj else f"ID: {p.id_tipo_permiso}"
+
                 tipo_txt = color("Días", Color.AZUL) if p.tipo == 'D' else color("Horas", Color.MAGENTA)
+                
                 print(color(f"  ID: {p.id}", Color.AMARILLO, Color.BOLD) +
-                      color(f"  |  Emp: {p.id_empleado}", Color.BLANCO) +
-                      color(f"  |  Tipo: {p.id_tipo_permiso}", Color.BLANCO) +
+                      color(f"  |  Emp: {nombre_emp:<20}", Color.BLANCO) +
+                      color(f"  |  Tipo: {desc_tipo:<15}", Color.BLANCO) +
                       f"  |  {p.tiempo} " + tipo_txt)
 
         linea("═", 60, Color.AZUL)

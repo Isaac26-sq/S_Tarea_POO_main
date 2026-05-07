@@ -1,1 +1,12 @@
-[]
+[
+    {
+        "id": 1,
+        "id_empleado": 1,
+        "id_tipo_permiso": 1,
+        "fecha_desde": "10/05/2025",
+        "fecha_hasta": "15/05/2025",
+        "tipo": "D",
+        "tiempo": 5,
+        "descuento": 0.0
+    }
+]
