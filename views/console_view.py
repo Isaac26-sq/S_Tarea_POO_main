@@ -118,7 +118,7 @@ class ConsoleView:
             cedula = self.obtener_cedula()
             duplicado = any(e.cedula == cedula for e in empleado_existentes)
             if duplicado:
-                mensaje_error(f"La cédula {cedula} ya está registrada en el sistema.")
+                error_y_pausa(f"La cédula {cedula} ya está registrada en el sistema.")
             else:
                 break
         sueldo = self.obtener_sueldo()
