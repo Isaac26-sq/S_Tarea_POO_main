@@ -4,6 +4,15 @@ Sistema de gestión de permisos laborales desarrollado en **Python puro**, aplic
 
 ---
 
+chat IA
+
+claude: https://claude.ai/share/b185cecc-8529-4b40-8667-b814cfa62f79  <--- Diagramas 
+claude: https://claude.ai/share/2b546d05-8715-4aed-af43-a0e7298a4062  <---- codigo
+Gemini: https://gemini.google.com/share/427511a444e9                  <---- codigo main 
+
+
+
+
 ## 📋 Tabla de contenidos
 
 - [Características](#-características)
