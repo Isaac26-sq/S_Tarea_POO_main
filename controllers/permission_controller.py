@@ -1,4 +1,4 @@
-# Controlador de solicitudes de permiso: CRUD con validaciones y persistencia.
+
 from core.interfaces import ICrud
 from core.json_manager import JsonManager
 from core.mixins import ValidationMixin, LogMixin

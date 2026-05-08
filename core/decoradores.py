@@ -74,7 +74,10 @@ def validar_fecha(funcion):
             if validar.upper() == 'R':
                 raise Cancelar()
             try:
-                datetime.datetime.strptime(validar, '%d/%m/%Y')
+                fecha = datetime.datetime.strptime(validar, '%d/%m/%Y').date()
+                if fecha > datetime.date.today():
+                    error_y_pausa("Error: La fecha no puede ser anterior a la fecha actual.")
+                    continue
                 return validar
             except ValueError:
                 error_y_pausa("Error: Formato inválido. Use DD/MM/YYYY y verifique que el día y mes sean lógicos.")
