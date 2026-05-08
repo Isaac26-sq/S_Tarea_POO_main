@@ -186,10 +186,16 @@ class MenuController:
                     self.vista.mostrar_mensaje("No hay solicitudes registradas.")
                     break
                 for s in self.sistema.permisos:
-                    print(f"ID Solicitud: {s.id} | Empleado ID: {s.id_empleado} | Fecha: {s.fecha_desde}")
-                ids_validos = [s.id for s in self.sistema.permisos]
+                    emp = next((e for e in self.sistema.empleados if e.id == s.id_empleado), None)
+                    nombre_emp = emp.nombre if emp else f"ID {s.id_empleado}"
+                    
+                    tipo = next((t for t in self.sistema.tipos_permiso if t.id == s.id_tipo_permiso), None)
+                    desc_tipo = tipo.descripcion if tipo else f"ID {s.id_tipo_permiso}"
+                    
+                    print(f"  ID: {s.id} | Emp: {nombre_emp} | Tipo: {desc_tipo} | Fecha: {s.fecha_desde}")
+                ids_validos = [s.id for s in self.sistema.permisos]  
 
-            while True:
+            while True:                                               
                 try:
                     id_b = int(float(self.vista.obtener_id_actualizar()))
                     if id_b in ids_validos:
@@ -198,9 +204,16 @@ class MenuController:
                 except ValueError as e:
                     self.vista.mostrar_mensaje(f"Error: {e}")
 
-            nuevos = self.vista.pedir_datos_actualizacion(cat)
-            self.sistema.actualizar(cat, id_b, nuevos)
-            break
+
+            if cat == 'A':
+                registro = next((e for e in self.sistema.empleados if e.id == id_b), None)
+            elif cat == 'B':
+                registro = next((t for t in self.sistema.tipos_permiso if t.id == id_b), None)
+            elif cat == 'C':
+                registro = next((p for p in self.sistema.permisos if p.id == id_b), None)
+            nuevos = self.vista.pedir_datos_actualizacion(cat, registro)        
+            self.sistema.actualizar(cat, id_b, nuevos)                
+            break                            
 
     def _estadisticas(self):
         limpiar()

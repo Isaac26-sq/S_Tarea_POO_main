@@ -52,12 +52,6 @@ def subtitulo(texto, col=Color.CYAN):
     
     print(color(f"\n  ── {texto} ──", col, Color.BOLD))
 
-def mensaje_ok(texto):
-    print(color(f"\n  ✔  {texto}", Color.VERDE, Color.BOLD))
-
-def mensaje_error(texto):
-    print(color(f"\n  ✘  {texto}", Color.ROJO, Color.BOLD))
-
 def mensaje_info(texto):
     print(color(f"\n  ℹ  {texto}", Color.AMARILLO))
 
@@ -305,12 +299,16 @@ class ConsoleView:
         linea("═", 60, Color.AZUL)
         pausa()
 
-    def pedir_datos_actualizacion(self, categoria):
+    def pedir_datos_actualizacion(self, categoria, registro=None):
         if categoria == 'A':
             limpiar_pantalla()
             linea("─", 50, Color.AMARILLO)
             titulo_seccion("ACTUALIZAR EMPLEADO", 50)
             linea("─", 50, Color.AMARILLO)
+            if registro:
+                print(color(f"  Modificando: ", Color.GRIS) +
+                    color(f"{registro.nombre}  |  Cédula: {registro.cedula}", Color.BLANCO, Color.BOLD))
+                linea("─", 50, Color.AMARILLO)
             nombre = self.obtener_nombre()
             sueldo = self.obtener_sueldo()
             return {"nombre": nombre, "sueldo": sueldo}
@@ -320,6 +318,11 @@ class ConsoleView:
             linea("─", 50, Color.AMARILLO)
             titulo_seccion("ACTUALIZAR TIPO DE PERMISO", 50)
             linea("─", 50, Color.AMARILLO)
+            if registro:
+                remu = color("Remunerado", Color.VERDE) if registro.remunerado == 'S' else color("No remunerado", Color.ROJO)
+                print(color(f"  Modificando: ", Color.GRIS) +
+                    color(f"{registro.descripcion}  |  ", Color.BLANCO, Color.BOLD) + remu)
+                linea("─", 50, Color.AMARILLO)
             desc = self.obtener_descripcion_permiso()
             remu = self.obtener_s_n().upper()
             return {"descripcion": desc, "remunerado": remu}
@@ -329,17 +332,29 @@ class ConsoleView:
             linea("─", 50, Color.AMARILLO)
             titulo_seccion("ACTUALIZAR SOLICITUD", 50)
             linea("─", 50, Color.AMARILLO)
+            if registro:
+                print(color(f"  Empleado ID: ", Color.GRIS) +
+                    color(f"{registro.id_empleado}", Color.BLANCO, Color.BOLD) +
+                    color(f"  |  Desde: ", Color.GRIS) +
+                    color(f"{registro.fecha_desde}", Color.BLANCO, Color.BOLD) +
+                    color(f"  |  Hasta: ", Color.GRIS) +
+                    color(f"{registro.fecha_hasta}", Color.BLANCO, Color.BOLD))
+                print(color(f"  Tipo: ", Color.GRIS) +
+                    color(f"{'Días' if registro.tipo == 'D' else 'Horas'}", Color.BLANCO, Color.BOLD) +
+                    color(f"  |  Tiempo: ", Color.GRIS) +
+                    color(f"{registro.tiempo}", Color.BLANCO, Color.BOLD))
+                linea("─", 50, Color.AMARILLO)  
             desde = self.obtener_fecha_inicio()
             while True:
                 hasta = self.obtener_fecha_fin()
                 if datetime.strptime(hasta, '%d/%m/%Y') >= datetime.strptime(desde, '%d/%m/%Y'):
                     break
-                mensaje_error("La fecha de fin no puede ser anterior a la fecha de inicio.")
+                error_y_pausa("La fecha de fin no puede ser anterior a la fecha de inicio.")
             tipo   = self.obtener_d_h()
             tiempo = int(self.obtener_cantidad_tiempo())
             return {"fecha_desde": desde, "fecha_hasta": hasta, "tipo": tipo, "tiempo": tiempo}
         else:
-            mensaje_error(f"Categoría de actualización '{categoria}' no reconocida.")
+            error_y_pausa(f"Categoría de actualización '{categoria}' no reconocida.")
             return {}
     
     def mostrar_mensaje(self, mensaje):
