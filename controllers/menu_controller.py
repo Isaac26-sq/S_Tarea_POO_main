@@ -39,11 +39,14 @@ class MenuController:
     def _registrar(self):
         while True:
             limpiar()
-            print("\n¿Qué desea registrar? [A] Empleado | [B] Tipo Permiso | [C] Solicitud")
+            print("\n¿Qué desea registrar? [A] Empleado | [B] Tipo Permiso | [C] Solicitud | [R] Regresar")
             tipo = input("Seleccione: ").upper()
 
+            if tipo == 'R':
+                break
+
             if tipo not in ['A', 'B', 'C']:
-                self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B o C.")
+                self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B , C o R.")
                 continue
 
             if tipo == 'A':
@@ -86,11 +89,14 @@ class MenuController:
     def _eliminar(self):
         while True:
             limpiar()
-            print("\nEliminar de: [A] Empleado | [B] Tipo | [C] Solicitud")
+            print("\nEliminar de: [A] Empleado | [B] Tipo | [C] Solicitud | [R] Regresar")
             cat = input("Categoría: ").upper()
 
+            if cat == 'R':
+                break
+
             if cat not in ['A', 'B', 'C']:
-                self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B o C.")
+                self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B , C o R.")
                 continue
 
             limpiar()
@@ -150,11 +156,14 @@ class MenuController:
     def _modificar(self):
         while True:
             limpiar()
-            print("\nModificar: [A] Empleado | [B] Tipo de Permiso | [C] Solicitud")
+            print("\nModificar: [A] Empleado | [B] Tipo de Permiso | [C] Solicitud | [R] Regresar")
             cat = input("Categoría: ").upper()
 
+            if cat == 'R':
+                break
+
             if cat not in ['A', 'B', 'C']:
-                self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B o C.")
+                self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B , C o R.")
                 continue
 
             limpiar()
