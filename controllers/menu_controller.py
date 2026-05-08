@@ -2,7 +2,8 @@ import os
 from models.employee import Empleado
 from models.permission_type import TipoPermiso
 from models.permission import Permiso
-from core.decoradores import error_y_pausa
+from core.decoradores import error_y_pausa, Cancelar
+from views.console_view import color
 
 
 def limpiar():
@@ -49,38 +50,40 @@ class MenuController:
                 self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B , C o R.")
                 continue
 
-            if tipo == 'A':
-                nom, sue, ced = self.vista.pedir_datos_empleado(self.sistema.empleados)
-                nuevo = Empleado(self.sistema.generar_id(self.sistema.empleados), nom, sue, ced)
-                if self.vista.confirmar_guardado():
-                    self.sistema.crear(nuevo)
-                else:
-                    self.vista.mostrar_mensaje("Registro cancelado.")
+            try:
+                if tipo == 'A':
+                    nom, sue, ced = self.vista.pedir_datos_empleado(self.sistema.empleados)
+                    nuevo = Empleado(self.sistema.generar_id(self.sistema.empleados), nom, sue, ced)
+                    if self.vista.confirmar_guardado():
+                        self.sistema.crear(nuevo)
+                    else:
+                        self.vista.mostrar_mensaje("Registro cancelado.")
 
-            elif tipo == 'B':
-                desc, remu = self.vista.pedir_datos_tipo_permiso()
-                nuevo = TipoPermiso(self.sistema.generar_id(self.sistema.tipos_permiso), desc, remu)
-                if self.vista.confirmar_guardado():
-                    self.sistema.crear(nuevo)
-                else:
-                    self.vista.mostrar_mensaje("Registro cancelado.")
+                elif tipo == 'B':
+                    desc, remu = self.vista.pedir_datos_tipo_permiso()
+                    nuevo = TipoPermiso(self.sistema.generar_id(self.sistema.tipos_permiso), desc, remu)
+                    if self.vista.confirmar_guardado():
+                        self.sistema.crear(nuevo)
+                    else:
+                        self.vista.mostrar_mensaje("Registro cancelado.")
 
-            elif tipo == 'C':
-                if not self.sistema.empleados:
-                    self.vista.mostrar_mensaje("No hay empleados registrados. Registre uno primero.")
-                    break
-                if not self.sistema.tipos_permiso:
-                    self.vista.mostrar_mensaje("No hay tipos de permiso registrados. Registre uno primero.")
-                    break
-                id_e, id_t, d, h, t, ti = self.vista.pedir_datos_solicitud(
-                    self.sistema.empleados, self.sistema.tipos_permiso
-                )
-                nuevo = Permiso(self.sistema.generar_id(self.sistema.permisos), id_e, id_t, d, h, t, ti)
-                if self.vista.confirmar_guardado():
-                    self.sistema.crear(nuevo)
-                else:
-                    self.vista.mostrar_mensaje("Registro cancelado.")
-            break
+                elif tipo == 'C':
+                    if not self.sistema.empleados:
+                        self.vista.mostrar_mensaje("No hay empleados registrados. Registre uno primero.")
+                        continue
+                    if not self.sistema.tipos_permiso:
+                        self.vista.mostrar_mensaje("No hay tipos de permiso registrados. Registre uno primero.")
+                        continue
+                    id_e, id_t, d, h, t, ti = self.vista.pedir_datos_solicitud(
+                        self.sistema.empleados, self.sistema.tipos_permiso
+                    )
+                    nuevo = Permiso(self.sistema.generar_id(self.sistema.permisos), id_e, id_t, d, h, t, ti)
+                    if self.vista.confirmar_guardado():
+                        self.sistema.crear(nuevo)
+                    else:
+                        self.vista.mostrar_mensaje("Registro cancelado.")
+            except Cancelar:
+                self.vista.mostrar_mensaje("Operación cancelada. Regresando al submenú.")
 
     def _consultar(self):
         datos = self.sistema.consultar()
@@ -99,59 +102,63 @@ class MenuController:
                 self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B , C o R.")
                 continue
 
-            limpiar()
-            if cat == 'A':
-                if not self.sistema.empleados:
-                    self.vista.mostrar_mensaje("No hay empleados registrados.")
-                    break
-                for e in self.sistema.empleados:
-                    print(f"  ID: {e.id} | {e.nombre}")
-                ids_validos = [e.id for e in self.sistema.empleados]
-            elif cat == 'B':
-                if not self.sistema.tipos_permiso:
-                    self.vista.mostrar_mensaje("No hay tipos de permiso registrados.")
-                    break
-                for t in self.sistema.tipos_permiso:
-                    print(f"  ID: {t.id} | {t.descripcion}")
-                ids_validos = [t.id for t in self.sistema.tipos_permiso]
-            elif cat == 'C':
-                if not self.sistema.permisos:
-                    self.vista.mostrar_mensaje("No hay solicitudes de permiso registradas.")
-                    break
-                
-                for p in self.sistema.permisos:
-                    emp = next((e for e in self.sistema.empleados if e.id == p.id_empleado), None)
-                    nombre_emp = emp.nombre if emp else f"ID {p.id_empleado}"
-                    
-                    tipo = next((t for t in self.sistema.tipos_permiso if t.id == p.id_tipo_permiso), None)
-                    desc_tipo = tipo.descripcion if tipo else f"ID {p.id_tipo_permiso}"
-                    
-                    print(f"  ID: {p.id} | Emp: {nombre_emp} | Tipo: {desc_tipo}")
-                
-                ids_validos = [p.id for p in self.sistema.permisos]
+            try:
+                limpiar()
+                if cat == 'A':
+                    if not self.sistema.empleados:
+                        self.vista.mostrar_mensaje("No hay empleados registrados.")
+                        continue
+                    for e in self.sistema.empleados:
+                        print(f"  ID: {e.id} | {e.nombre}")
+                    ids_validos = [e.id for e in self.sistema.empleados]
+                elif cat == 'B':
+                    if not self.sistema.tipos_permiso:
+                        self.vista.mostrar_mensaje("No hay tipos de permiso registrados.")
+                        continue
+                    for t in self.sistema.tipos_permiso:
+                        print(f"  ID: {t.id} | {t.descripcion}")
+                    ids_validos = [t.id for t in self.sistema.tipos_permiso]
+                elif cat == 'C':
+                    if not self.sistema.permisos:
+                        self.vista.mostrar_mensaje("No hay solicitudes de permiso registradas.")
+                        continue
 
-            while True:
-                try:
-                    id_b = int(float(self.vista.obtener_id_busqueda()))
-                    if id_b in ids_validos:
-                        break
-                    error_y_pausa(f"Error: No existe un registro con ID {id_b}.")
-                except ValueError as e:
-                    self.vista.mostrar_mensaje(f"Error: {e}")
+                    for p in self.sistema.permisos:
+                        emp = next((e for e in self.sistema.empleados if e.id == p.id_empleado), None)
+                        nombre_emp = emp.nombre if emp else f"ID {p.id_empleado}"
 
-            
-            if cat == 'A':
-                permisos_activos = [p for p in self.sistema.permisos if p.id_empleado == id_b]
-                if permisos_activos:
-                    self.vista.mostrar_mensaje(
-                        f"No se puede eliminar: el empleado ID {id_b} "
-                        f"tiene {len(permisos_activos)} permiso(s) activo(s). "
-                        "Elimine primero sus solicitudes."
-                    )
-                    break
+                        tipo = next((t for t in self.sistema.tipos_permiso if t.id == p.id_tipo_permiso), None)
+                        desc_tipo = tipo.descripcion if tipo else f"ID {p.id_tipo_permiso}"
 
-            self.sistema.eliminar(cat, id_b)
-            break
+                        print(f"  ID: {p.id} | Emp: {nombre_emp} | Tipo: {desc_tipo}")
+
+                    ids_validos = [p.id for p in self.sistema.permisos]
+
+                print(color("  (Escriba R para cancelar)", "\033[90m"))
+                while True:
+                    try:
+                        id_b = int(float(self.vista.obtener_id_busqueda()))
+                        if id_b in ids_validos:
+                            break
+                        error_y_pausa(f"Error: No existe un registro con ID {id_b}.")
+                    except Cancelar:
+                        raise
+                    except ValueError as e:
+                        self.vista.mostrar_mensaje(f"Error: {e}")
+
+                if cat == 'A':
+                    permisos_activos = [p for p in self.sistema.permisos if p.id_empleado == id_b]
+                    if permisos_activos:
+                        self.vista.mostrar_mensaje(
+                            f"No se puede eliminar: el empleado ID {id_b} "
+                            f"tiene {len(permisos_activos)} permiso(s) activo(s). "
+                            "Elimine primero sus solicitudes."
+                        )
+                        continue
+
+                self.sistema.eliminar(cat, id_b)
+            except Cancelar:
+                self.vista.mostrar_mensaje("Operación cancelada. Regresando al submenú.")
 
     def _modificar(self):
         while True:
@@ -166,54 +173,58 @@ class MenuController:
                 self.vista.mostrar_mensaje("Error: Opción no válida. Elija A, B , C o R.")
                 continue
 
-            limpiar()
-            if cat == 'A':
-                if not self.sistema.empleados:
-                    self.vista.mostrar_mensaje("No hay empleados registrados.")
-                    break
-                for e in self.sistema.empleados:
-                    print(f"  ID: {e.id} | {e.nombre}")
-                ids_validos = [e.id for e in self.sistema.empleados]
-            elif cat == 'B':
-                if not self.sistema.tipos_permiso:
-                    self.vista.mostrar_mensaje("No hay tipos de permiso registrados.")
-                    break
-                for t in self.sistema.tipos_permiso:
-                    print(f"  ID: {t.id} | {t.descripcion}")
-                ids_validos = [t.id for t in self.sistema.tipos_permiso]
-            elif cat == 'C':
-                if not self.sistema.permisos:
-                    self.vista.mostrar_mensaje("No hay solicitudes registradas.")
-                    break
-                for s in self.sistema.permisos:
-                    emp = next((e for e in self.sistema.empleados if e.id == s.id_empleado), None)
-                    nombre_emp = emp.nombre if emp else f"ID {s.id_empleado}"
-                    
-                    tipo = next((t for t in self.sistema.tipos_permiso if t.id == s.id_tipo_permiso), None)
-                    desc_tipo = tipo.descripcion if tipo else f"ID {s.id_tipo_permiso}"
-                    
-                    print(f"  ID: {s.id} | Emp: {nombre_emp} | Tipo: {desc_tipo} | Fecha: {s.fecha_desde}")
-                ids_validos = [s.id for s in self.sistema.permisos]  
+            try:
+                limpiar()
+                if cat == 'A':
+                    if not self.sistema.empleados:
+                        self.vista.mostrar_mensaje("No hay empleados registrados.")
+                        continue
+                    for e in self.sistema.empleados:
+                        print(f"  ID: {e.id} | {e.nombre}")
+                    ids_validos = [e.id for e in self.sistema.empleados]
+                elif cat == 'B':
+                    if not self.sistema.tipos_permiso:
+                        self.vista.mostrar_mensaje("No hay tipos de permiso registrados.")
+                        continue
+                    for t in self.sistema.tipos_permiso:
+                        print(f"  ID: {t.id} | {t.descripcion}")
+                    ids_validos = [t.id for t in self.sistema.tipos_permiso]
+                elif cat == 'C':
+                    if not self.sistema.permisos:
+                        self.vista.mostrar_mensaje("No hay solicitudes registradas.")
+                        continue
+                    for s in self.sistema.permisos:
+                        emp = next((e for e in self.sistema.empleados if e.id == s.id_empleado), None)
+                        nombre_emp = emp.nombre if emp else f"ID {s.id_empleado}"
 
-            while True:                                               
-                try:
-                    id_b = int(float(self.vista.obtener_id_actualizar()))
-                    if id_b in ids_validos:
-                        break
-                    error_y_pausa(f"Error: No existe un registro con ID {id_b}.")
-                except ValueError as e:
-                    self.vista.mostrar_mensaje(f"Error: {e}")
+                        tipo = next((t for t in self.sistema.tipos_permiso if t.id == s.id_tipo_permiso), None)
+                        desc_tipo = tipo.descripcion if tipo else f"ID {s.id_tipo_permiso}"
 
+                        print(f"  ID: {s.id} | Emp: {nombre_emp} | Tipo: {desc_tipo} | Fecha: {s.fecha_desde}")
+                    ids_validos = [s.id for s in self.sistema.permisos]
 
-            if cat == 'A':
-                registro = next((e for e in self.sistema.empleados if e.id == id_b), None)
-            elif cat == 'B':
-                registro = next((t for t in self.sistema.tipos_permiso if t.id == id_b), None)
-            elif cat == 'C':
-                registro = next((p for p in self.sistema.permisos if p.id == id_b), None)
-            nuevos = self.vista.pedir_datos_actualizacion(cat, registro)        
-            self.sistema.actualizar(cat, id_b, nuevos)                
-            break                            
+                print(color("  (Escriba R para cancelar)", "\033[90m"))
+                while True:
+                    try:
+                        id_b = int(float(self.vista.obtener_id_actualizar()))
+                        if id_b in ids_validos:
+                            break
+                        error_y_pausa(f"Error: No existe un registro con ID {id_b}.")
+                    except Cancelar:
+                        raise
+                    except ValueError as e:
+                        self.vista.mostrar_mensaje(f"Error: {e}")
+
+                if cat == 'A':
+                    registro = next((e for e in self.sistema.empleados if e.id == id_b), None)
+                elif cat == 'B':
+                    registro = next((t for t in self.sistema.tipos_permiso if t.id == id_b), None)
+                elif cat == 'C':
+                    registro = next((p for p in self.sistema.permisos if p.id == id_b), None)
+                nuevos = self.vista.pedir_datos_actualizacion(cat, registro)
+                self.sistema.actualizar(cat, id_b, nuevos)
+            except Cancelar:
+                self.vista.mostrar_mensaje("Operación cancelada. Regresando al submenú.")                            
 
     def _estadisticas(self):
         limpiar()

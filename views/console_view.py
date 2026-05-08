@@ -106,6 +106,7 @@ class ConsoleView:
         linea("─", 50, Color.VERDE)
         titulo_seccion("REGISTRO DE EMPLEADO", 50)
         linea("─", 50, Color.VERDE)
+        print(color("  (Escriba R en cualquier campo para cancelar)", Color.GRIS))
 
         nombre = self.obtener_nombre()
         while True:
@@ -145,6 +146,7 @@ class ConsoleView:
         linea("─", 50, Color.MAGENTA)
         titulo_seccion("REGISTRO DE TIPO DE PERMISO", 50)
         linea("─", 50, Color.MAGENTA)
+        print(color("  (Escriba R en cualquier campo para cancelar)", Color.GRIS))
 
         desc = self.obtener_descripcion_permiso()
         remu = self.obtener_s_n()
@@ -181,6 +183,7 @@ class ConsoleView:
         linea("─", 50, Color.CYAN)
         titulo_seccion("NUEVA SOLICITUD DE PERMISO", 50)
         linea("─", 50, Color.CYAN)
+        print(color("  (Escriba R en cualquier campo para cancelar)", Color.GRIS))
 
         subtitulo("EMPLEADOS DISPONIBLES", Color.VERDE)
         for e in empleados:
