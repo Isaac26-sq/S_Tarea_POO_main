@@ -12,6 +12,7 @@ chat IA
 
 -| Gemini: https://gemini.google.com/share/427511a444e9               <---- codigo main |  
 
+-| GitHub  https://github.com/Isaac26-sq/S_Tarea_POO_main.git  | 
 
 
 
