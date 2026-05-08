@@ -1,14 +1,35 @@
 import re
 import datetime
+
+_ROJO  = "\033[91m"
+_GRIS  = "\033[90m"
+_RESET = "\033[0m"
+
+_SUBIR   = "\033[1A"
+_LIMPIAR = "\033[2K"
+
+
+def error_y_pausa(mensaje):
+    print(f"{_ROJO}  {mensaje}{_RESET}")
+    input(f"{_GRIS}  Presione ENTER para continuar...{_RESET}")
+    
+    print(f"{_SUBIR}{_LIMPIAR}", end="", flush=True)
+   
+    print(f"{_SUBIR}{_LIMPIAR}", end="", flush=True)
+    
+    print(f"{_SUBIR}{_LIMPIAR}", end="", flush=True)
+
+
+
 def validar_nombre(funcion):
     def wrapper(*args, **kwargs):
-
         while True:
             validar = funcion(*args, **kwargs).strip()
             patron = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
-            if validar and re.match(patron, validar): 
-                return validar
-            print("Error: El nombre debe contener solo letras y no estar vacío.")
+            partes = validar.split()
+            if validar and re.match(patron, validar) and len(partes) >= 2:
+                return validar.title()
+            error_y_pausa("Error: Ingrese al menos un nombre y un apellido (solo letras).")
     return wrapper
     
 
@@ -20,7 +41,7 @@ def validar_texto(funcion):
             
             if validar and any(c.isalpha() for c in validar):
                 return validar
-            print("Error: La descripción no puede estar vacía ni contener solo números o símbolos.")
+            error_y_pausa("Error: La descripción no puede estar vacía ni contener solo números o símbolos.")
     return wrapper
 
 
@@ -32,9 +53,9 @@ def validar_numero(funcion):
                 valor = float(valor_str)
                 if valor > 0:
                     return valor
-                print("Error: El valor debe ser mayor a 0. Intente de nuevo")
+                error_y_pausa("Error: El valor debe ser mayor a 0. Intente de nuevo")
             except:
-                print("Error: Debe ingresar un valor númerico válido.")
+                error_y_pausa("Error: Debe ingresar un valor númerico válido.")
     return wrapper
     
 def validar_fecha(funcion):
@@ -45,8 +66,7 @@ def validar_fecha(funcion):
                 datetime.datetime.strptime(validar, '%d/%m/%Y')
                 return validar
             except ValueError:
-                print("Error: Formato de fecha invalidad. Use DD/MM/YYYY.")
-                print("Asegúrese que el día y mes sean lógicos (ej: mes 1 al 12).")
+                error_y_pausa("Error: Formato inválido. Use DD/MM/YYYY y verifique que el día y mes sean lógicos.")
     return wrapper
 
 def validar_d_h(funcion):
@@ -55,7 +75,7 @@ def validar_d_h(funcion):
             validar = funcion(*args, **kwargs).strip().upper()
             if validar in ['D', 'H']:
                 return validar
-            print("Error: Entrada inválida. Ingrese 'D' (Dias) o 'H' (Horas).")
+            error_y_pausa("Error: Entrada inválida. Ingrese 'D' (Dias) o 'H' (Horas).")
     return wrapper
                      
 
@@ -65,7 +85,7 @@ def validar_s_n(funcion):
             validar = funcion(*args, **kwargs).strip().upper()
             if validar in ['S', 'N']:
                 return validar
-            print("Error: Entrada inválida. Ingrese 'S' (Si) o 'N' (No).")
+            error_y_pausa("Error: Entrada inválida. Ingrese 'S' (Si) o 'N' (No).")
     return wrapper 
 
 def validar_cedula(funcion):
@@ -73,12 +93,12 @@ def validar_cedula(funcion):
         while True:
             validar = funcion(*args, **kwargs).strip() 
             if not (validar.isdigit() and len(validar) == 10): 
-                print("Error: Cédula inválida. Debe contener exactamente 10 números (sin letras).")  
+                error_y_pausa("Error: Cédula inválida. Debe contener exactamente 10 números (sin letras).")  
                 continue
             
             provincia = int(validar[:2])
             if not (0 < provincia <= 24):
-                print("Error: Código de provincia inválido.")
+                error_y_pausa("Error: Código de provincia inválido.")
                 continue
 
             digitos = [int(d) for d in validar]
@@ -97,7 +117,7 @@ def validar_cedula(funcion):
 
             if resultado == verificador:
                 return validar
-            print("Error: Cédula falsa (Módulo 10 fallido).")
+            error_y_pausa("Error: Cédula falsa (Módulo 10 fallido).")
     return wrapper     
 
 

@@ -1,14 +1,8 @@
 [
     {
         "id": 1,
-        "nombre": "Isaac Silva",
-        "sueldo": 20000.0,
+        "nombre": "Isaac Silva Quiroz",
+        "sueldo": 2000.0,
         "cedula": "1250145701"
-    },
-    {
-        "id": 2,
-        "nombre": "Carlos Quispe",
-        "sueldo": 200.0,
-        "cedula": "1206141879"
     }
 ]

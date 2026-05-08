@@ -1,4 +1,4 @@
-from core.decoradores import validar_nombre, validar_texto, validar_numero, validar_fecha, validar_d_h, validar_s_n, validar_cedula
+from core.decoradores import validar_nombre, validar_texto, validar_numero, validar_fecha, validar_d_h, validar_s_n, validar_cedula, error_y_pausa
 from models.permission import Permiso as _Permiso
 from datetime import datetime
 import os
@@ -97,15 +97,8 @@ class ConsoleView:
 
     @validar_nombre
     def obtener_nombre(self):
-       
-        Nombre_completo = input(color("  Nombre y Apellido: ", Color.CYAN)).strip()
-        partes = Nombre_completo.split()
-        if len(partes) >= 2 and all(p.isalpha() for p in partes):
-            return Nombre_completo.title()
+        return input(color("  Nombre y Apellido: ", Color.CYAN))
             
-        mensaje_error("Debe ingresar al menos un nombre y un apellido.")
-        return ""
-
     @validar_numero
     def obtener_sueldo(self):
         return input(color("  Sueldo mensual ($): ", Color.CYAN))
@@ -133,14 +126,15 @@ class ConsoleView:
         return nombre, sueldo, cedula
 
     def confirmar_guardado(self):
+        print(color("\n  ¿Desea guardar?", Color.AMARILLO, Color.BOLD))
+        print(f"  {color('1', Color.VERDE, Color.BOLD)}  Sí")
+        print(f"  {color('2', Color.ROJO,  Color.BOLD)}  No")
         while True:
-            print(color("\n  ¿Desea guardar?", Color.AMARILLO, Color.BOLD))
-            print(f"  {color('[1]', Color.VERDE, Color.BOLD)}  Sí")
-            print(f"  {color('[2]', Color.ROJO,  Color.BOLD)}  No")
             opcion = input(color("  Seleccione: ", Color.AMARILLO))
             if opcion in ['1', '2']:
                 return opcion == '1'
-            mensaje_error("Opción inválida. Ingrese 1 o 2.")
+            
+            error_y_pausa("Error: Opción inválida. Ingrese 1 o 2.")
 
    
 
@@ -204,7 +198,7 @@ class ConsoleView:
             id_emp = int(self.obtener_id_empleado())
             if id_emp in ids_empleados:
                 break
-            mensaje_error(f"No existe un empleado con ID {id_emp}. Elija uno de los disponibles.")
+            error_y_pausa(f"No existe un empleado con ID {id_emp}. Elija uno de los disponibles.")
 
         subtitulo("TIPOS DE PERMISO DISPONIBLES", Color.VERDE)
         for t in tipos_permiso:
@@ -218,14 +212,14 @@ class ConsoleView:
             id_tipo = int(self.obtener_id_tipo())
             if id_tipo in ids_tipos:
                 break
-            mensaje_error(f"No existe un tipo de permiso con ID {id_tipo}. Elija uno de los disponibles.")
+            error_y_pausa(f"No existe un tipo de permiso con ID {id_tipo}. Elija uno de los disponibles.")
 
         desde = self.obtener_fecha_inicio()
         while True:
             hasta = self.obtener_fecha_fin()
             if datetime.strptime(hasta, '%d/%m/%Y') >= datetime.strptime(desde, '%d/%m/%Y'):
                 break
-            mensaje_error("La fecha de fin no puede ser anterior a la fecha de inicio.")
+            error_y_pausa("La fecha de fin no puede ser anterior a la fecha de inicio.")
 
         tipo  = self.obtener_d_h()
         tiempo = int(self.obtener_cantidad_tiempo())

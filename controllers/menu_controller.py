@@ -2,6 +2,7 @@ import os
 from models.employee import Empleado
 from models.permission_type import TipoPermiso
 from models.permission import Permiso
+from core.decoradores import error_y_pausa
 
 
 def limpiar():
@@ -111,8 +112,16 @@ class MenuController:
                 if not self.sistema.permisos:
                     self.vista.mostrar_mensaje("No hay solicitudes de permiso registradas.")
                     break
+                
                 for p in self.sistema.permisos:
-                    print(f"  ID: {p.id} | Emp: {p.id_empleado} | Tipo: {p.id_tipo_permiso}")
+                    emp = next((e for e in self.sistema.empleados if e.id == p.id_empleado), None)
+                    nombre_emp = emp.nombre if emp else f"ID {p.id_empleado}"
+                    
+                    tipo = next((t for t in self.sistema.tipos_permiso if t.id == p.id_tipo_permiso), None)
+                    desc_tipo = tipo.descripcion if tipo else f"ID {p.id_tipo_permiso}"
+                    
+                    print(f"  ID: {p.id} | Emp: {nombre_emp} | Tipo: {desc_tipo}")
+                
                 ids_validos = [p.id for p in self.sistema.permisos]
 
             while True:
@@ -120,7 +129,7 @@ class MenuController:
                     id_b = int(float(self.vista.obtener_id_busqueda()))
                     if id_b in ids_validos:
                         break
-                    print(f"Error: No existe un registro con ID {id_b}.")
+                    error_y_pausa(f"Error: No existe un registro con ID {id_b}.")
                 except ValueError as e:
                     self.vista.mostrar_mensaje(f"Error: {e}")
 
@@ -176,7 +185,7 @@ class MenuController:
                     id_b = int(float(self.vista.obtener_id_actualizar()))
                     if id_b in ids_validos:
                         break
-                    print(f"Error: No existe un registro con ID {id_b}.")
+                    error_y_pausa(f"Error: No existe un registro con ID {id_b}.")
                 except ValueError as e:
                     self.vista.mostrar_mensaje(f"Error: {e}")
 

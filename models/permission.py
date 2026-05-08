@@ -7,7 +7,7 @@ class Permiso:
         self.fecha_hasta     = fecha_hasta
         self.tipo            = tipo
         self.tiempo          = tiempo
-        self.descuento       = descuento  # monto calculado y persistido
+        self.descuento       = descuento  
 
     def calcular_descuento(self, valor_hora):
         
