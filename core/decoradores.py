@@ -76,7 +76,7 @@ def validar_fecha(funcion):
             try:
                 fecha = datetime.datetime.strptime(validar, '%d/%m/%Y').date()
                 if fecha > datetime.date.today():
-                    error_y_pausa("Error: La fecha no puede sobre pasar a la fecha actual.")
+                    error_y_pausa("Error: La fecha no puede sobrepasar a la fecha actual.")
                     continue
                 return validar
             except ValueError:
