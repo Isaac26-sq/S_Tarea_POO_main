@@ -79,7 +79,7 @@ class EmployeeController(ICrud, ValidationMixin, LogMixin):
         self.log("Empleado actualizado correctamente")
 
     def eliminar(self, categoria=None, id_borrar=None):
-        """Elimina un empleado por ID."""
+        
         print("\n=== ELIMINAR EMPLEADO ===")
 
         if id_borrar is None:
